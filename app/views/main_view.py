@@ -31,16 +31,28 @@ class Main_window(ctk):
         self.grid_columnconfigure(1, weight=4)
         
         # ||||||||||||||||| Lignes |||||||||||||||||
-        self.grid_rowconfigure(0,weight=1, uniform='group1')
-        self.grid_rowconfigure(1,weight=2, uniform='group1')
-        self.grid_rowconfigure(2,weight=10, uniform='group1')
-        self.grid_rowconfigure(3,weight=1, uniform='group1')
+        #self.grid_rowconfigure(0,weight=1, uniform='group1')
+        self.grid_rowconfigure(0,weight=3, uniform='group1')
+        self.grid_rowconfigure(1,weight=10, uniform='group1')
+        self.grid_rowconfigure(2,weight=1, uniform='group1')
         
         # _________FRAMES DE LA FENETRE_________
         # On charge les différentes frames qui constituerons notre fenêtre, 
         # ici nous en avons 5 : le menu, les disques, les outils, le contenu et l'état
         self.menu = MenuFrame(self)  #on créer le frame qui contiendra les éléments de la barre de menu 
-        self.menu.run()
+        self.menu.add_menu_bar()
+        
+        self.disques_menu = DisqueFrame(self) #on créer le frame responsable d'afficher les disques et on l'initialise avec grid
+        self.disques_menu.grid(row=0, rowspan=2, column=0, padx=(0,3), pady=(3,3), sticky="nsew")
+        
+        self.outils = OutilsFrame(self) #on créer le frame qui contiendra les éléments de la barre d'outil et on l'initialise avec grid
+        self.outils.grid(row=0, column=1, padx=(3,0), pady=(3,3), sticky ="ew")
+        
+        self.contenu = DefaultContenuFrame(self) #on créer le frame qui contiendra les éléments de la zone de contenu principale et on l'initialise avec grid
+        self.contenu.grid(row=1, column=1, padx=(3,0), pady=(3,0), sticky="nsew")
+        
+        self.menu = TachesFrame(self)  #on créer le frame qui contiendra les éléments de la barre de tache et on l'initialise avec grid
+        self.menu.grid(row=2, column=0, columnspan=2, padx=(0,0), pady=(0,0), sticky="sew")
 
 
 view = Main_window()
