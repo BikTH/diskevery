@@ -1,6 +1,7 @@
 import tkinter as tk
-from customtkinter import CTK as ctk
+from customtkinter import CTk as ctk
 from general_information import *
+from frames_class import *
 
 class Main_window(ctk):
     """_summary_ Classe principale de la vue, elle permet de construire 
@@ -38,4 +39,9 @@ class Main_window(ctk):
         # _________FRAMES DE LA FENETRE_________
         # On charge les différentes frames qui constituerons notre fenêtre, 
         # ici nous en avons 5 : le menu, les disques, les outils, le contenu et l'état
-        
+        self.menu = MenuFrame(self)  #on créer le frame qui contiendra les éléments de la barre de menu 
+        self.menu.run()
+
+
+view = Main_window()
+view.mainloop()
