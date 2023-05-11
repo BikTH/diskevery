@@ -1,18 +1,17 @@
 import tkinter as tk
-from customtkinter import CTkFrame as Frame
+from customtkinter import CTkFrame as CTkFrame
 from customtkinter import *
-from PIL import Image, ImageTk
 from general_information import *
 
 
-class Main_frame(Frame):
+class Main_frame(CTkFrame):
     """_summary_ 
     cette classe nous servira de base pour toute nos frames
     """
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.configure(corner_radius=0)
+    def __init__(self, parent, *args, **kwargs):
         self.parent = parent
+        super().__init__(self.parent)
+        self.configure(corner_radius=0)
 
 
 #____________________________________________________________________________
@@ -55,21 +54,80 @@ class MenuFrame(tk.Menu):
 
 
 #____________________________________________________________________________
-class Disque_liste(Main_frame):
+class Disque_label(CTkLabel):
     """Cette classe nous permetrra de lister les différents disque 
     """
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent, position: int, name: str, free_space: str = '---', total_space: str = '---', type: str = "disk"):
+        """Constructeur de notre classe
+        Args:
+            parent (any): Le parent de cette classe
+            position (int): la position du label
+            name (str): Nom du disque
+            free_space (int): espace libre sur le disque. par défaut "---"
+            total_space (int): espace toal du disque. par défaut "---"
+            type (str, optional): Type de disque: disk, cd, usb. par défaut "disk".
+        """
+        self.parent = parent
+        self.position = position
+        self.name = name
+        self.type = type
+        self.free_space = free_space+' Go' if free_space != '---' else free_space 
+        self.total_space = total_space+' Go' if total_space != '---' else total_space 
+        self.text = f'{self.name} \n {self.free_space} / {self.total_space}'
+        
+        if self.type == 'cd':
+            self.image = return_ctk_image(cd_ico, 50, 50)
+        elif self.type == 'usb':
+            self.image = return_ctk_image(usb_ico, 50, 50)
+        else:
+            self.image = return_ctk_image(disk_ico, 50, 50)
+        
+        super().__init__(self.parent,
+                         text=self.text,
+                         corner_radius=8,
+                         text_color=("black", "white"),
+                         #font=()
+                         anchor="center",
+                         compound="left",
+                         justify="left",
+                         padx=5,
+                         pady=5,
+                         image= self.image
+                         )
+    
+    def run_disk_label(self):
+        print(self.position)
+        self.parent.grid(row=self.position, column=0, padx=(10,10), pady=(10,0), sticky="new")
+    
+    def update_label_position(self,new_position: int):
+        self.parent.grid_forget()
+        self.parent.grid(row=new_position, column=0, padx=(10,10), pady=(10,0), sticky="new")
+    
+    def update_label_text(self,new_text: str):
+        self.configure(text=new_text)
+    
+    def delete_label(self):
+        self.destroy()
 
 
 #____________________________________________________________________________
 class DisqueFrame(Main_frame):
     """Cette classe nous permetrra de lister les différents disque 
     """
+    
     def __init__(self, parent):
-        super().__init__(parent)
+        self.parent = parent
+        super().__init__(self.parent, bg_color='black')
         
-        titre =  CTkLabel(self.parent, text="CTkLabel", )
+        self.titre =  CTkLabel(self, text="Disques",width=60, font=( 'none', 16), fg_color='transparent', padx=5, pady=15,)
+        self.titre.grid(row=0, column=0, padx=(10,10), pady=(10,10), sticky="nsew")
+        
+        self.disk1 = Disque_label(self,position=1,name="Rupasan_drive",free_space='15',total_space='30',type="usb")
+        self.disk1.grid(row=1, column=0, padx=(10,10), pady=(10,0), sticky="new")
+        
+        self.disk2 = Disque_label(self,position=2,name="Rupasan",free_space='10',total_space='16',type="usb")
+        self.disk2.grid(row=2, column=0, padx=(10,10), pady=(10,0), sticky="new")
+    
 
 
 #____________________________________________________________________________

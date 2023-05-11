@@ -4,11 +4,8 @@ from general_information import *
 from frames_class import *
 
 class Main_window(ctk):
-    """_summary_ Classe principale de la vue, elle permet de construire 
+    """ Classe principale de la vue, elle permet de construire 
     la fenêtre principale de notre application et ses composants 
-
-    Args:
-        ctk (_type_): _description_ classe parent 
     """   
     current_disk = " "
     
@@ -25,7 +22,7 @@ class Main_window(ctk):
         self.minsize(600, 400) #on définit la taille minimal que pourra avoir notre fenêtre
         
         # _________COLONNES & LIGNE DE LA FENETRE_________
-        # On définit les proportions des compartiments de notre fenêtre afin qu'il soit le plus resposif possible
+        # On définit les proportions des compartiments de notre fenêtre afin qu'il soit le plus resposif possible   
         # ||||||||||||||||| Colonnes |||||||||||||||||
         self.grid_columnconfigure(0,weight=0)
         self.grid_columnconfigure(1, weight=4)
@@ -42,8 +39,8 @@ class Main_window(ctk):
         self.menu = MenuFrame(self)  #on créer le frame qui contiendra les éléments de la barre de menu 
         self.menu.add_menu_bar()
         
-        self.disques_menu = DisqueFrame(self) #on créer le frame responsable d'afficher les disques et on l'initialise avec grid
-        self.disques_menu.grid(row=0, rowspan=2, column=0, padx=(0,3), pady=(3,3), sticky="nsew")
+        self.disques = DisqueFrame(self) #on créer le frame responsable d'afficher les disques et on l'initialise avec grid
+        self.disques.grid(row=0, rowspan=2, column=0, padx=(0,3), pady=(3,3), sticky="nsew")
         
         self.outils = OutilsFrame(self) #on créer le frame qui contiendra les éléments de la barre d'outil et on l'initialise avec grid
         self.outils.grid(row=0, column=1, padx=(3,0), pady=(3,3), sticky ="ew")
