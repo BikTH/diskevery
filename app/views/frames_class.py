@@ -96,17 +96,25 @@ class Disque_label(CTkLabel):
                          )
     
     def run_disk_label(self):
-        print(self.position)
         self.parent.grid(row=self.position, column=0, padx=(10,10), pady=(10,0), sticky="new")
     
     def update_label_position(self,new_position: int):
         self.parent.grid_forget()
         self.parent.grid(row=new_position, column=0, padx=(10,10), pady=(10,0), sticky="new")
     
-    def update_label_text(self,new_text: str):
-        self.configure(text=new_text)
+    def update_label_text(self,new_name: str, new_free_space: int):
+        """Permet de metre à jour le texte du label
+        Args:
+            nom (str): le nouveau nom
+            new_free_space (int): le nouvel espace libre
+        """
+        self.name =new_name
+        self.free_space =new_free_space
+        self.configure(text=f'{self.name} \n {self.free_space} / {self.total_space}')
     
     def delete_label(self):
+        """permet de supprimer le label
+        """
         self.destroy()
 
 
