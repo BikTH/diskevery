@@ -22,10 +22,15 @@ menu_bar_style = { #on définit le style de notre menu ici
 }
 
 #Disque_Frame
-disk_ico = "disk_frame_ico/disk.ico"
-usb_ico = "disk_frame_ico/usb.ico"
-cd_ico = "disk_frame_ico/cd.ico"
+disk_ico_light = "disk_frame_ico/disk_light.png" #icone pour un disque
+disk_ico_dark = "disk_frame_ico/disk_dark2.png" #icone pour un disque
+usb_ico_light = "disk_frame_ico/usb_light.png" #icone pour une clef usb
+usb_ico_dark = "disk_frame_ico/usb_dark2.png" #icone pour une clef usb
+cd_ico_light = "disk_frame_ico/cd_light.png" #icone pour un lecteur de cd
+cd_ico_dark = "disk_frame_ico/cd_dark2.png" #icone pour une clef usb
 
+#Default_Contenu_Frame
+default_ico = "default.png" #image pour la page par défaut
 
 menu_style = {
     "bg": "black", # couleur de fond
@@ -48,13 +53,17 @@ def assets_images(path_to_file: str):
     """
     return "assets/images/"+path_to_file 
 
-def return_ctk_image(image: str, width: int, height: int ):
+def return_ctk_image(dark_image: str, width: int, height: int, light_image: str = None):
     """Cette fonction retourne un élément image compatible avec tkinter et Ctkinter
     Args:
-        image (str): le chemin vers l'image partant du répertoire assets/images/
+        dark_image (str): le chemin vers l'image adapté au thème sombre partant du répertoire assets/images/
+        light_image (str): le chemin vers l'image adapté au thème clair partant du répertoire assets/images/
         width (int): la largeur qu'on veut attribuer à l'image en px
         height (int): la hauteur qu'on veut associer à l'image en px
     Returns:
         objet CTkImage: l'image en un format compréhensible par tkinter et ctkinter
     """
-    return CTkImage(Image.open(assets_images(image)), size=(width, height))
+    if light_image == None :
+        return CTkImage(light_image=Image.open(assets_images(dark_image)), dark_image=Image.open(assets_images(dark_image)),size=(width, height))
+    else: 
+        return CTkImage(light_image=Image.open(assets_images(light_image)), dark_image=Image.open(assets_images(dark_image)),size=(width, height))

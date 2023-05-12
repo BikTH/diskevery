@@ -1,0 +1,3 @@
+code couleur pour les image theme sombre : #D3CDCD
+
+code couleur pour les image theme sombre 2 : #3DCDCD

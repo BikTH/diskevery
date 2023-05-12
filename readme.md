@@ -14,3 +14,8 @@ Application graphique destiné au environnement linux pour la gestion et la réc
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
 
 
+## Crédit
+
+[Icons8](https://icones8.fr)
+
+
