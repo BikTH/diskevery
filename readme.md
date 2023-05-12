@@ -16,6 +16,6 @@ Application graphique destiné au environnement linux pour la gestion et la réc
 
 ## Crédit
 
-[Icons8](https://icones8.fr)
+[Icons8](https://icones8.fr) : Icônes de l'application
 
 
