@@ -67,6 +67,7 @@ class Disque_label(CTkLabel):
             total_space (int): espace toal du disque. par défaut "---"
             type (str, optional): Type de disque: disk, cd, usb. par défaut "disk".
         """
+        
         self.parent = parent
         self.position = position
         self.name = name
@@ -87,7 +88,7 @@ class Disque_label(CTkLabel):
                          corner_radius=8,
                          text_color=("black", "white"),
                          font=('ubuntu', 10),
-                         anchor="center",
+                         anchor="e",
                          compound="left",
                          justify="left",
                          padx=5,
@@ -138,13 +139,64 @@ class DisqueFrame(Main_frame):
         
         self.disk3 = Disque_label(self,position=3,name="cd - lecteur",type="cd")
         self.disk3.grid(row=3, column=0, padx=(10,10), pady=(10,0), sticky="new")
+
+
+#____________________________________________________________________________
+class Outil_label(CTkLabel):
+    """Cette classe va nous permettre de charger les labels relatifs aux divers outils
+    """
     
+    def __init__(self, parent, position: int, titre: str, image_dark: str, image_light:str):
+        """Le construceur de notre classe nous permettrra de définir les attributs de notre label
+        Args:
+            parent (any): parent du label
+            position (int): position d'apparition de l'outil
+            titre (str): Titre de l'outil
+            image_dark (str): chemin vers l'image theme sombre à partir du dossier assets/images/
+            image_light (str): chemin vers l'image theme clair à partir du dossier assets/images/
+        """
+        
+        self.parent = parent
+        self.position = position
+        self.titre = titre
+        self.image = return_ctk_image(image_dark,60,60,image_light)
+        
+        super().__init__(self.parent,
+                         text=self.titre,
+                         corner_radius=8,
+                         text_color=("black", "white"),
+                         font=('ubuntu', 10),
+                         anchor="center",
+                         compound="top",
+                         justify="center",
+                         padx=5,
+                         pady=5,
+                         image= self.image)
 
 
 #____________________________________________________________________________
 class OutilsFrame(Main_frame):
+    """Cette classe va nous permettre d'afficher les éléments de la barre d'outils
+    """
     def __init__(self, parent):
         super().__init__(parent)
+        
+        self.grid_columnconfigure((0,1,2,3,4), weight=1, )
+        self.grid_columnconfigure(5, weight=2, )
+        
+        self.format = Outil_label(self, titre= 'Formater', position=0, image_dark=formater_ico[1], image_light=formater_ico[2])
+        self.mount = Outil_label(self, titre= 'Monter Disque', position=1, image_dark=mount_ico[1], image_light=mount_ico[2])
+        self.resize = Outil_label(self, titre= 'Etendre/Réduire partition', position=2, image_dark=resize_ico[1], image_light=resize_ico[2])
+        self.create_partition = Outil_label(self, titre= 'Créer une partition', position=3, image_dark=create_partition_ico[1], image_light=create_partition_ico[2])
+        self.delete_partition = Outil_label(self, titre= 'Supprimer partition', position=4, image_dark=delete_partition_ico[1], image_light=delete_partition_ico[2])
+        self.recovery = Outil_label(self, titre= 'Restaurer Disque', position=5, image_dark=recovery_ico[1], image_light=recovery_ico[2])
+        
+        self.format.grid(row=0, column=0, padx=(5,5), pady=(10,10), sticky="nsew")
+        self.mount.grid(row=0, column=1, padx=(5,5), pady=(10,10),  sticky="nsew")
+        self.resize.grid(row=0, column=2, padx=(5,5), pady=(10,10), sticky="nsew")
+        self.create_partition.grid(row=0, column=3, padx=(5,5), pady=(10,10), sticky="nsew")
+        self.delete_partition.grid(row=0, column=4, padx=(5,5), pady=(10,10), sticky="nsew")
+        self.recovery.grid(row=0, column=5, padx=(10,10), pady=(10,10), sticky="nsew")
 
 
 #____________________________________________________________________________
@@ -156,11 +208,13 @@ class DefaultContenuFrame(Main_frame):
         self.configure(fg_color="transparent")
         
         self.text = "Aucun périphérique sélectionné pour l'instant"
-        self.text2 = "Sélectionner un pérphérique à gérer"
+        self.text2 = "Sélectionner un périphérique à gérer"
         self.image = return_ctk_image(default_ico,100,100)
         
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1) 
+        
+        self.grid_rowconfigure(0, weight=1, uniform='default')
+        self.grid_rowconfigure(1, weight=1, uniform='default')
         
         content = CTkLabel(self,
                          text=self.text,
@@ -174,6 +228,9 @@ class DefaultContenuFrame(Main_frame):
                          image= self.image
                          )
         content.grid(row=0, column=0, columnspan=2, padx=(10,10), pady=(10,10), sticky="nsew")
+        
+        content2 = CTkLabel(self, text=self.text2, font=('ubuntu', 20))
+        content2.grid(row=1, column=0, columnspan=2, padx=(10,10), pady=(10,10), sticky="new")
 
 
 #____________________________________________________________________________

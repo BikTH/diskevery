@@ -43,7 +43,7 @@ class Main_window(ctk):
         self.disques.grid(row=0, rowspan=2, column=0, padx=(0,3), pady=(3,3), sticky="nsew")
         
         self.outils = OutilsFrame(self) #on créer le frame qui contiendra les éléments de la barre d'outil et on l'initialise avec grid
-        self.outils.grid(row=0, column=1, padx=(3,0), pady=(3,3), sticky ="ew")
+        self.outils.grid(row=0, column=1, padx=(3,0), pady=(3,3), sticky ="new")
         
         self.contenu = DefaultContenuFrame(self) #on créer le frame qui contiendra les éléments de la zone de contenu principale et on l'initialise avec grid
         self.contenu.grid(row=1, column=1, padx=(3,0), pady=(3,0), sticky="nsew")

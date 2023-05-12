@@ -22,12 +22,20 @@ menu_bar_style = { #on définit le style de notre menu ici
 }
 
 #Disque_Frame
-disk_ico_light = "disk_frame_ico/disk_light.png" #icone pour un disque
+disk_ico_light= "disk_frame_ico/disk_light.png" #icone pour un disque
 disk_ico_dark = "disk_frame_ico/disk_dark2.png" #icone pour un disque
 usb_ico_light = "disk_frame_ico/usb_light.png" #icone pour une clef usb
 usb_ico_dark = "disk_frame_ico/usb_dark2.png" #icone pour une clef usb
 cd_ico_light = "disk_frame_ico/cd_light.png" #icone pour un lecteur de cd
 cd_ico_dark = "disk_frame_ico/cd_dark2.png" #icone pour une clef usb
+
+#Outils_Frame
+formater_ico = ["outils/formater_dark.png", "outils/formater_dark2.png", "outils/formater_light.png"]
+create_partition_ico = ["outils/create_partition_dark.png", "outils/create_partition_dark2.png", "outils/create_partition_light.png"]
+delete_partition_ico = ["outils/delete_partition_dark.png", "outils/delete_partition_dark2.png", "outils/delete_partition_light.png"]
+mount_ico = ["outils/mont_dark.png", "outils/mont_dark2.png", "outils/mont_light.png"]
+recovery_ico = ["outils/recovery_dark.png", "outils/recovery_dark2.png", "outils/recovery_light.png"]
+resize_ico = ["outils/resize_dark.png", "outils/resize_dark2.png", "outils/resize_light.png"]
 
 #Default_Contenu_Frame
 default_ico = "default.png" #image pour la page par défaut
@@ -57,7 +65,7 @@ def return_ctk_image(dark_image: str, width: int, height: int, light_image: str 
     """Cette fonction retourne un élément image compatible avec tkinter et Ctkinter
     Args:
         dark_image (str): le chemin vers l'image adapté au thème sombre partant du répertoire assets/images/
-        light_image (str): le chemin vers l'image adapté au thème clair partant du répertoire assets/images/
+        light.png_image (str): le chemin vers l'image adapté au thème clair partant du répertoire assets/images/
         width (int): la largeur qu'on veut attribuer à l'image en px
         height (int): la hauteur qu'on veut associer à l'image en px
     Returns:
