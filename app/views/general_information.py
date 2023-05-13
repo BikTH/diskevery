@@ -7,6 +7,7 @@ from customtkinter import  *
 app_name = 'Diskevery'
 app_ico = 'assets/diskevery.ico'
 default_theme = 'black'
+app_font = 'ubuntu'
 
 
 
@@ -15,10 +16,26 @@ default_theme = 'black'
 
 #Menu_Frame
 menu_bar_style = { #on définit le style de notre menu ici
-    "bg": "black", # couleur de fond
+    "bg": "#2b2b2b", # couleur de fond #242424
     "fg": "white", # couleur de texte
     "activebackground": "grey", # couleur de fond quand le menu est actif
     "activeforeground": "white", # couleur de texte quand le menu est actif
+    "bd": 0, # épaisseur de la bordure du menu
+    "cursor": 'hand2', # forme du curseur quand il survole le menu
+    "font": (app_font, 12), # police et taille du texte du menu
+    "relief": 'flat' # style de la bordure du menu (flat, groove, raised, ridge, solid, or sunken)
+}
+
+menu_style = {
+    "bg": "#2b2b2b", # couleur de fond
+    "fg": "white", # couleur de texte
+    "activebackground": "grey", # couleur de fond quand la commande est active
+    "activeforeground": "white", # couleur de texte quand la commande est active
+    "bd": 0, # épaisseur de la bordure du menu
+    "cursor": 'hand2', # forme du curseur quand il survole le menu
+    "font": (app_font, 10), # police et taille du texte du menu
+    "relief": 'flat', # style de la bordure du menu (flat, groove, raised, ridge, solid, or sunken)
+    "borderwidth": 15 #largeur du menu
 }
 
 #Disque_Frame
@@ -28,6 +45,17 @@ usb_ico_light = "disk_frame_ico/usb_light.png" #icone pour une clef usb
 usb_ico_dark = "disk_frame_ico/usb_dark2.png" #icone pour une clef usb
 cd_ico_light = "disk_frame_ico/cd_light.png" #icone pour un lecteur de cd
 cd_ico_dark = "disk_frame_ico/cd_dark2.png" #icone pour une clef usb
+
+disque_label_style = {
+    "corner_radius": 8,
+    "text_color": ("black", "white"),
+    "font": (app_font, 10),
+    "anchor": "e",
+    "compound": "left",
+    "justify": "left",
+    "padx": 5,
+    "pady": 5,
+}
 
 #Outils_Frame
 formater_ico = ["outils/formater_dark.png", "outils/formater_dark2.png", "outils/formater_light.png"]
@@ -39,13 +67,6 @@ resize_ico = ["outils/resize_dark.png", "outils/resize_dark2.png", "outils/resiz
 
 #Default_Contenu_Frame
 default_ico = "default.png" #image pour la page par défaut
-
-menu_style = {
-    "bg": "black", # couleur de fond
-    "fg": "white", # couleur de texte
-    "activebackground": "grey", # couleur de fond quand la commande est active
-    "activeforeground": "white", # couleur de texte quand la commande est active
-}
 
 
 # _________Helpers_________

@@ -23,19 +23,21 @@ class MenuFrame(tk.Menu):
         super().__init__(parent)
         self.parent = parent
         
-        self.config(**menu_bar_style) #on définit les configurations de style de notre barre de menu
+        self.config(**menu_bar_style,tearoff = 0) #on définit les configurations de style de notre barre de menu
         
         #On crée les menus de notre barre de menu
         
         #Diskevery
-        self.app_menu = tk.Menu(self, tearoff = 0) 
+        self.app_menu = tk.Menu(self, tearoff = 0,) 
         self.app_menu.config(**menu_style) #on définit les configurations de style pour ce menu
-        self.app_menu.add_command(label='Agrandir') 
-        self.app_menu.add_command(label='Rétrécir')
+        self.app_menu.add_command(label='Agrandir',) 
+        self.app_menu.add_command(label='Réduire')
+        self.app_menu.add_separator
+        self.app_menu.add_command(label='Fermer application', command=self.parent.destroy)
         #Vue
         self.view_menu = tk.Menu(self, tearoff= 0)
         self.view_menu.config(**menu_style) #on définit les configurations de style pour ce menu
-        self.view_menu.add_command(label='Theme') 
+        self.view_menu.add_command(label='Theme',state=['disabled']) 
         self.view_menu.add_command(label='Langue') 
         #Aide
         self.help_menu = tk.Menu(self, tearoff= 0)
@@ -83,23 +85,27 @@ class Disque_label(CTkLabel):
         else:
             self.image = return_ctk_image(disk_ico_dark, 50, 50, disk_ico_light)
         
-        super().__init__(self.parent,
-                         text=self.text,
-                         corner_radius=8,
-                         text_color=("black", "white"),
-                         font=('ubuntu', 10),
-                         anchor="e",
-                         compound="left",
-                         justify="left",
-                         padx=5,
-                         pady=5,
-                         image= self.image
-                         )
+        super().__init__(self.parent, text=self.text, image= self.image, **disque_label_style) 
+        #on définit le style de notre classe et on lui passe en paramètre le pareent, le nom, l'image
+        
+        def on_enter(event):
+            self.configure(fg_color='#242424')
+        def on_leave(event):
+            self.configure(fg_color='transparent') 
+        
+        self.bind('<Enter>', on_enter)
+        self.bind('<Leave>', on_leave)
     
     def run_disk_label(self):
+        """permet d'afficher le label
+        """
         self.parent.grid(row=self.position, column=0, padx=(10,10), pady=(10,0), sticky="new")
     
     def update_label_position(self,new_position: int):
+        """Permet de changer la position du label
+        Args:
+            new_position (int): nouvelle position
+        """
         self.parent.grid_forget()
         self.parent.grid(row=new_position, column=0, padx=(10,10), pady=(10,0), sticky="new")
     
@@ -128,7 +134,7 @@ class DisqueFrame(Main_frame):
         self.parent = parent
         super().__init__(self.parent, bg_color='black')
         
-        self.titre =  CTkLabel(self, text="Disques",width=60, font=('ubuntu', 20), fg_color='transparent', padx=5, pady=15,)
+        self.titre =  CTkLabel(self, text="Disques",width=60, font=(app_font, 20), fg_color='transparent', padx=5, pady=15,)
         self.titre.grid(row=0, column=0, padx=(10,10), pady=(10,10), sticky="nsew")
         
         self.disk1 = Disque_label(self,position=1,name="Rupasan_drive",free_space='15',total_space='30')
@@ -165,13 +171,23 @@ class Outil_label(CTkLabel):
                          text=self.titre,
                          corner_radius=8,
                          text_color=("black", "white"),
-                         font=('ubuntu', 10),
+                         font=(app_font, 10),
                          anchor="center",
                          compound="top",
                          justify="center",
                          padx=5,
                          pady=5,
                          image= self.image)
+        
+        def on_enter(event):
+            self.configure(fg_color='#242424')
+        def on_leave(event):
+            self.configure(fg_color='transparent') 
+        
+        self.bind('<Enter>', on_enter)
+        self.bind('<Leave>', on_leave)
+        
+        
 
 
 #____________________________________________________________________________
@@ -219,7 +235,7 @@ class DefaultContenuFrame(Main_frame):
         content = CTkLabel(self,
                          text=self.text,
                          corner_radius=8,
-                         font=('ubuntu', 30),
+                         font=(app_font, 30),
                          anchor="center",
                          compound="top",
                          justify="center",
@@ -229,7 +245,7 @@ class DefaultContenuFrame(Main_frame):
                          )
         content.grid(row=0, column=0, columnspan=2, padx=(10,10), pady=(10,10), sticky="nsew")
         
-        content2 = CTkLabel(self, text=self.text2, font=('ubuntu', 20))
+        content2 = CTkLabel(self, text=self.text2, font=(app_font, 20))
         content2.grid(row=1, column=0, columnspan=2, padx=(10,10), pady=(10,10), sticky="new")
 
 
