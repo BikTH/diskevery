@@ -1,8 +1,10 @@
 from PIL import Image, ImageTk
 from customtkinter import  *
 
-# _________main_view.py_________
-#Variables utilisé dans le fichier frames_class.py
+# ________________________________________________main_view.py
+#Variables utilisé dans le fichier main_view.py
+#
+#
 
 app_name = 'Diskevery'
 app_ico = 'assets/diskevery.ico'
@@ -11,12 +13,14 @@ app_font = 'ubuntu'
 
 
 
-# _________frames_class.py_________
+# ________________________________________________frames_class.py
 #Variables utilisé dans le fichier frames_class.py
+#
+#
 
 #Menu_Frame
 menu_bar_style = { #on définit le style de notre menu ici
-    "bg": "#2b2b2b", # couleur de fond #242424
+    "bg": "#2b2b2b", # couleur de fond. #242424 autre choix de couleur
     "fg": "white", # couleur de texte
     "activebackground": "grey", # couleur de fond quand le menu est actif
     "activeforeground": "white", # couleur de texte quand le menu est actif
@@ -57,6 +61,13 @@ disque_label_style = {
     "pady": 5,
 }
 
+disque_grid_style = {
+    "column": 0, 
+    "padx": (10,10), 
+    "pady": (10,0), 
+    "sticky": "new"
+}
+
 #Outils_Frame
 formater_ico = ["outils/formater_dark.png", "outils/formater_dark2.png", "outils/formater_light.png"]
 create_partition_ico = ["outils/create_partition_dark.png", "outils/create_partition_dark2.png", "outils/create_partition_light.png"]
@@ -65,12 +76,25 @@ mount_ico = ["outils/mont_dark.png", "outils/mont_dark2.png", "outils/mont_light
 recovery_ico = ["outils/recovery_dark.png", "outils/recovery_dark2.png", "outils/recovery_light.png"]
 resize_ico = ["outils/resize_dark.png", "outils/resize_dark2.png", "outils/resize_light.png"]
 
+outils_label_style = {
+    "corner_radius": 8,
+    "text_color": ("black", "white"),
+    "font": (app_font, 10),
+    "anchor": "center",
+    "compound": "top",
+    "justify": "center",
+    "padx": 5,
+    "pady": 5,
+}
+
 #Default_Contenu_Frame
 default_ico = "default.png" #image pour la page par défaut
 
 
-# _________Helpers_________
+# ________________________________________________Helpers
 # Fonctions servant à faire diverses tâches
+#
+# 
 
 def assets_images(path_to_file: str):
     """Cette fonction retourne le chemin vers le fichier contenu assets/images
@@ -86,7 +110,7 @@ def return_ctk_image(dark_image: str, width: int, height: int, light_image: str 
     """Cette fonction retourne un élément image compatible avec tkinter et Ctkinter
     Args:
         dark_image (str): le chemin vers l'image adapté au thème sombre partant du répertoire assets/images/
-        light.png_image (str): le chemin vers l'image adapté au thème clair partant du répertoire assets/images/
+        light_image (str): le chemin vers l'image adapté au thème clair partant du répertoire assets/images/
         width (int): la largeur qu'on veut attribuer à l'image en px
         height (int): la hauteur qu'on veut associer à l'image en px
     Returns:

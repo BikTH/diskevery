@@ -2,6 +2,7 @@ import tkinter as tk
 from customtkinter import CTk as ctk
 from general_information import *
 from frames_class import *
+from bind_function import *
 
 class Main_window(ctk):
     """ Classe principale de la vue, elle permet de construire 
@@ -14,12 +15,14 @@ class Main_window(ctk):
         """
         super().__init__() #on appelle le constructeur de la classe parent ctk
         
+        
         # _________INFOS SUR LA FENETRE_________
         # On définit les information générale relative à notre fenêtre
         self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}") #on définit la taille par défaut de la fenêtre : plein écran ici
         self.title(f"{app_name}") #on définit le titre de la fenêtre
         self._set_appearance_mode(default_theme) #on définit le thème par défaut de l'application: dark, system ou light
         self.minsize(600, 400) #on définit la taille minimal que pourra avoir notre fenêtre
+        
         
         # _________COLONNES & LIGNE DE LA FENETRE_________
         # On définit les proportions des compartiments de notre fenêtre afin qu'il soit le plus resposif possible   
@@ -32,6 +35,7 @@ class Main_window(ctk):
         self.grid_rowconfigure(0,weight=3, uniform='group1')
         self.grid_rowconfigure(1,weight=10, uniform='group1')
         self.grid_rowconfigure(2,weight=1, uniform='group1')
+        
         
         # _________FRAMES DE LA FENETRE_________
         # On charge les différentes frames qui constituerons notre fenêtre, 

@@ -2,6 +2,7 @@ import tkinter as tk
 from customtkinter import CTkFrame as CTkFrame
 from customtkinter import *
 from general_information import *
+from bind_function import *
 
 
 class Main_frame(CTkFrame):
@@ -96,10 +97,12 @@ class Disque_label(CTkLabel):
         self.bind('<Enter>', on_enter)
         self.bind('<Leave>', on_leave)
     
+    
     def run_disk_label(self):
         """permet d'afficher le label
         """
         self.parent.grid(row=self.position, column=0, padx=(10,10), pady=(10,0), sticky="new")
+    
     
     def update_label_position(self,new_position: int):
         """Permet de changer la position du label
@@ -108,6 +111,7 @@ class Disque_label(CTkLabel):
         """
         self.parent.grid_forget()
         self.parent.grid(row=new_position, column=0, padx=(10,10), pady=(10,0), sticky="new")
+    
     
     def update_label_text(self,new_name: str =NONE, new_free_space: int=NONE):
         """Permet de metre à jour le texte du label
@@ -118,6 +122,7 @@ class Disque_label(CTkLabel):
         self.name=new_name if new_name != NONE else self.name
         self.free_space=new_free_space if new_free_space != NONE else self.free_space
         self.configure(text=f'{self.name} \n {self.free_space} / {self.total_space}')
+    
     
     def delete_label(self):
         """permet de supprimer le label
@@ -135,16 +140,16 @@ class DisqueFrame(Main_frame):
         super().__init__(self.parent, bg_color='black')
         
         self.titre =  CTkLabel(self, text="Disques",width=60, font=(app_font, 20), fg_color='transparent', padx=5, pady=15,)
-        self.titre.grid(row=0, column=0, padx=(10,10), pady=(10,10), sticky="nsew")
+        self.titre.grid(row=0, column=0, padx=(10,10), pady=(10,15), sticky="nsew")
         
         self.disk1 = Disque_label(self,position=1,name="Rupasan_drive",free_space='15',total_space='30')
-        self.disk1.grid(row=1, column=0, padx=(10,10), pady=(10,0), sticky="new")
+        self.disk1.grid(row=1, **disque_grid_style)
         
         self.disk2 = Disque_label(self,position=2,name="Rupasan",free_space='10',total_space='16',type="usb")
-        self.disk2.grid(row=2, column=0, padx=(10,10), pady=(10,0), sticky="new")
+        self.disk2.grid(row=2, **disque_grid_style)
         
         self.disk3 = Disque_label(self,position=3,name="cd - lecteur",type="cd")
-        self.disk3.grid(row=3, column=0, padx=(10,10), pady=(10,0), sticky="new")
+        self.disk3.grid(row=3, **disque_grid_style)
 
 
 #____________________________________________________________________________
@@ -167,27 +172,12 @@ class Outil_label(CTkLabel):
         self.titre = titre
         self.image = return_ctk_image(image_dark,60,60,image_light)
         
-        super().__init__(self.parent,
-                         text=self.titre,
-                         corner_radius=8,
-                         text_color=("black", "white"),
-                         font=(app_font, 10),
-                         anchor="center",
-                         compound="top",
-                         justify="center",
-                         padx=5,
-                         pady=5,
-                         image= self.image)
-        
-        def on_enter(event):
-            self.configure(fg_color='#242424')
-        def on_leave(event):
-            self.configure(fg_color='transparent') 
-        
-        self.bind('<Enter>', on_enter)
-        self.bind('<Leave>', on_leave)
+        super().__init__(self.parent, text=self.titre, image= self.image, **outils_label_style)
         
         
+        
+        self.bind("<Enter>", lambda event, on=self : hover_on(event, on))
+        self.bind("<Leave>", lambda event, on=self : hover_off(event, on))
 
 
 #____________________________________________________________________________
