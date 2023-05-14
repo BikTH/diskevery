@@ -1,2 +1,5 @@
 app/views/__pycache__/frames_class.cpython-311.pyc
 app/views/__pycache__/general_information.cpython-311.pyc
+
+*.pyc
+*/__pycache__
