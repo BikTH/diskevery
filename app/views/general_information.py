@@ -90,6 +90,16 @@ outils_label_style = {
 #Default_Contenu_Frame
 default_ico = "default.png" #image pour la page par défaut
 
+Default_contenu_style = {
+    "corner_radius": 8,
+    "font": (app_font, 30),
+    "anchor": "center",
+    "compound": "top",
+    "justify": "center",
+    "padx": 10,
+    "pady": 10,
+}
+
 
 # ________________________________________________Helpers
 # Fonctions servant à faire diverses tâches
@@ -120,3 +130,10 @@ def return_ctk_image(dark_image: str, width: int, height: int, light_image: str 
         return CTkImage(light_image=Image.open(assets_images(dark_image)), dark_image=Image.open(assets_images(dark_image)),size=(width, height))
     else: 
         return CTkImage(light_image=Image.open(assets_images(light_image)), dark_image=Image.open(assets_images(dark_image)),size=(width, height))
+
+
+
+# ________________________________________________Données de test
+#
+# 
+

@@ -8,9 +8,12 @@ class Main_window(ctk):
     """ Classe principale de la vue, elle permet de construire 
     la fenêtre principale de notre application et ses composants 
     """   
-    current_disk = " "
+    List_disk = " "
+    Disk_open = " "
+    Focus_on = " "
     
-    def __init__(self): 
+    
+    def __init__(self, list_disk: tuple = None): 
         """_summary_ Constructeur de notre classe
         """
         super().__init__() #on appelle le constructeur de la classe parent ctk
@@ -54,6 +57,14 @@ class Main_window(ctk):
         
         self.menu = TachesFrame(self)  #on créer le frame qui contiendra les éléments de la barre de tache et on l'initialise avec grid
         self.menu.grid(row=2, column=0, columnspan=2, padx=(0,0), pady=(0,0), sticky="sew")
+    
+    
+    def grid_contenu(self):
+        """Cette méthode va nous permetre d'ajouter un nouveau contenu à notre fenêtre
+        """
+        self.contenu.grid_remove()
+        self.contenu = ContenuFrame(self)
+        self.contenu.grid(row=1, column=1, padx=(3,0), pady=(3,0), sticky="nsew")
 
 
 view = Main_window()
