@@ -111,7 +111,7 @@ class Disque_label(CTkLabel):
         
         # CLICK TRIGER : le trigers bind en rapport avec la sélection
         #
-        self.bind("<Button-1>", lambda event, on=self.main: select_disk_label(event, on))
+        self.bind("<Button-1>", lambda event, on=self, main=self.main, parent=self.parent: select_disk_label(event, on, main, parent))
     
     
     def run_disk_label(self):
@@ -157,6 +157,8 @@ class DisqueFrame(Main_frame):
         self.titre =  CTkLabel(self, text="Disques",width=60, font=(app_font, 20), fg_color='transparent', padx=5, pady=15,)
         self.titre.grid(row=0, column=0, padx=(10,10), pady=(10,15), sticky="nsew")
         
+        self.active_disk = None
+        
         
         #TEST : à retirer présent pour raison de test actuellement
         #
@@ -196,6 +198,10 @@ class Outil_label(CTkLabel):
         
         super().__init__(self.parent, text=self.titre, image= self.image, **outils_label_style)
         
+        self._bind_function = [select_formater_dialog, select_mont_dialog, select_resize_dialog, select_creation_dialog, select_delete_dialog, select_recovery_dialog]
+        
+        # self.bind_function = self._bind_function[self.position]
+        
         # HOVER TRIGERS : les trigers bind en rapport avec le hover
         #
         self.bind("<Enter>", lambda event, on=self : hover_on(event, on)) #change le bg au survol
@@ -203,7 +209,25 @@ class Outil_label(CTkLabel):
         
         # CLICK TRIGER : le trigers en rapport avec la sélection
         #
-        
+        self.bind("<Button-1>", lambda event, on=self : self._bind_function[self.position](event, on))
+    
+    def open_formater_dialog(event):
+        dialog = Format_Dialog()
+    
+    def open_resize_dialog(event):
+        dialog = Resize_Dialog()
+    
+    def open_mont_dialog(event):
+        dialog = Mont_Dialog()
+    
+    def open_creation_dialog(event):
+        dialog = Creation_Dialog()
+    
+    def open_delete_dialog(event):
+        dialog = Delete_Dialog()
+    
+    def open_recovery_dialog(event):
+        dialog = Recovery_Dialog()
 
 
 class OutilsFrame(Main_frame):
@@ -268,7 +292,148 @@ class ContenuFrame(Main_frame):
 
 
 
+
 #____________________________________________________________________________TACHES
 class TachesFrame(Main_frame):
     def __init__(self, parent):
         super().__init__(parent)
+
+
+
+
+#____________________________________________________________________________DIALOGUES
+class Main_Dialog(CTkToplevel):
+    """Cette classe va servir de classe de référence pour nos boîtes de dialogue
+    """
+    def __init__(self, title: str, fg_color= None):
+        super().__init__(fg_color=fg_color)
+        
+        self._user_input = None 
+        #cette variable contiendra les inputs de l'utilisateur sur le dialogue
+        
+        self.title(title) #on définit le titre de la fenêtre
+        self.lift() #pour metre notre fenêtre au premier plan
+        self.attributes("-topmost", True) #pour garder notre fenêtre au premier plan
+        self.protocol("WM_DELETE_WINDOW", self._on_closing) #pour fermer notre fenêtre lorsque le fenêtre principal se ferme
+        self.resizable(False, False) #pour éviter que les boîte de dialogue soit redimensionné
+        self.grab_set() #pour rendre les autres fenêtre non cliquable lorsque la boîte de dialogue est ouverte
+        
+        self._fg_color = ThemeManager.theme["CTkToplevel"]["fg_color"] 
+        self._text_color = ThemeManager.theme["CTkLabel"]["text_color"] 
+        self._button_fg_color = ThemeManager.theme["CTkButton"]["fg_color"] 
+        self._button_hover_color = ThemeManager.theme["CTkButton"]["hover_color"] 
+        self._button_text_color = ThemeManager.theme["CTkButton"]["text_color"] 
+        self._entry_fg_color = ThemeManager.theme["CTkEntry"]["fg_color"] 
+        self._entry_border_color = ThemeManager.theme["CTkEntry"]["border_color"] 
+        self._entry_text_color = ThemeManager.theme["CTkEntry"]["text_color"] 
+
+    
+    def _ok_event(self, event=None):
+        self._user_input = self._entry.get()
+        self.grab_release()
+        self.destroy()
+    
+    def _on_closing(self):
+        self.grab_release()
+        self.destroy()
+    
+    def _cancel_event(self):
+        self.grab_release()
+        self.destroy()
+    
+    def get_input(self):
+        self.master.wait_window(self)
+        return self._user_input
+
+
+class Format_Dialog(Main_Dialog):
+    
+    def __init__(self):
+        
+        self.titre = "Formater "
+        super().__init__(self.titre)
+        
+        self.after(10, self._create_format_widgets)
+        #on crée le contenu de notre boîte de dialogue
+    
+    def _create_format_widgets(self):
+        
+        self.grid_columnconfigure((0, 1), weight=1)
+        self.rowconfigure(0, weight=1)
+        
+        self._label = CTkLabel(master=self,
+                               width=300,
+                               wraplength=300,
+                               fg_color="transparent",
+                               text_color=self._text_color,
+                               text="test",)
+        self._label.grid(row=0, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
+        
+        self._entry = CTkEntry(master=self,
+                               width=230,
+                               fg_color=self._entry_fg_color,
+                               border_color=self._entry_border_color,
+                               text_color=self._entry_text_color)
+        self._entry.grid(row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="ew")
+        
+        self._ok_button = CTkButton(master=self,
+                                    width=100,
+                                    border_width=0,
+                                    fg_color=self._button_fg_color,
+                                    hover_color=self._button_hover_color,
+                                    text_color=self._button_text_color,
+                                    text='Ok',
+                                    command=self._ok_event)
+        self._ok_button.grid(row=2, column=0, columnspan=1, padx=(20, 10), pady=(0, 20), sticky="ew")
+
+class Resize_Dialog(Main_Dialog):
+    
+    def __init__(self):
+        
+        self.titre = "Formater "
+        super().__init__(self.titre)
+        
+        self.after(10, self._create_format_widgets)
+        #on crée le contenu de notre boîte de dialogue
+    
+    def _create_format_widgets(self):
+        
+        self.grid_columnconfigure((0, 1), weight=1)
+        self.rowconfigure(0, weight=1)
+        
+        self._label = CTkLabel(master=self,
+                               width=300,
+                               wraplength=300,
+                               fg_color="transparent",
+                               text_color=self._text_color,
+                               text="test2",)
+        self._label.grid(row=0, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
+        
+        self._entry = CTkEntry(master=self,
+                               width=230,
+                               fg_color=self._entry_fg_color,
+                               border_color=self._entry_border_color,
+                               text_color=self._entry_text_color)
+        self._entry.grid(row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="ew")
+        
+        self._ok_button = CTkButton(master=self,
+                                    width=100,
+                                    border_width=0,
+                                    fg_color=self._button_fg_color,
+                                    hover_color=self._button_hover_color,
+                                    text_color=self._button_text_color,
+                                    text='Ok',
+                                    command=self._ok_event)
+        self._ok_button.grid(row=2, column=0, columnspan=1, padx=(20, 10), pady=(0, 20), sticky="ew")
+
+class Mont_Dialog(Main_Dialog):
+    pass
+
+class Creation_Dialog(Main_Dialog):
+    pass
+
+class Delete_Dialog(Main_Dialog):
+    pass
+
+class Recovery_Dialog(Main_Dialog):
+    pass
