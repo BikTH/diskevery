@@ -19,12 +19,11 @@ class Main_label(CTkLabel):
     """on définira dans cette classe les différentes réaction qu'aura un label 
     en fonction des trigers .bind qui lui serons passé
     """
-    def __init__(self, parent, main_windows, *args, **kwargs):
+    def __init__(self, parent, main_window, *args, **kwargs):
         super().__init__(parent,*args,**kwargs)
         
-        self.main = main_windows
-        
-        
+        self.main = main_window
+
 
 #____________________________________________________________________________MENU
 class MenuFrame(tk.Menu):
@@ -119,7 +118,6 @@ class Disque_label(CTkLabel):
         """
         self.parent.grid(row=self.position, column=0, padx=(10,10), pady=(10,0), sticky="new")
     
-    
     def update_label_position(self,new_position: int):
         """Permet de changer la position du label
         Args:
@@ -127,7 +125,6 @@ class Disque_label(CTkLabel):
         """
         self.parent.grid_forget()
         self.parent.grid(row=new_position, column=0, padx=(10,10), pady=(10,0), sticky="new")
-    
     
     def update_label_text(self,new_name: str =NONE, new_free_space: int=NONE):
         """Permet de metre à jour le texte du label
@@ -138,7 +135,6 @@ class Disque_label(CTkLabel):
         self.name=new_name if new_name != NONE else self.name
         self.free_space=new_free_space if new_free_space != NONE else self.free_space
         self.configure(text=f'{self.name} \n {self.free_space} / {self.total_space}')
-    
     
     def delete_label(self):
         """permet de supprimer le label
@@ -213,6 +209,8 @@ class Outil_label(CTkLabel):
     
     def open_formater_dialog(event):
         dialog = Format_Dialog()
+        text = dialog.get_input()
+        print(text)
     
     def open_resize_dialog(event):
         dialog = Resize_Dialog()
@@ -308,7 +306,7 @@ class Main_Dialog(CTkToplevel):
     def __init__(self, title: str, fg_color= None):
         super().__init__(fg_color=fg_color)
         
-        self._user_input = None 
+        self._user_input = [] 
         #cette variable contiendra les inputs de l'utilisateur sur le dialogue
         
         self.title(title) #on définit le titre de la fenêtre
@@ -326,12 +324,6 @@ class Main_Dialog(CTkToplevel):
         self._entry_fg_color = ThemeManager.theme["CTkEntry"]["fg_color"] 
         self._entry_border_color = ThemeManager.theme["CTkEntry"]["border_color"] 
         self._entry_text_color = ThemeManager.theme["CTkEntry"]["text_color"] 
-
-    
-    def _ok_event(self, event=None):
-        self._user_input = self._entry.get()
-        self.grab_release()
-        self.destroy()
     
     def _on_closing(self):
         self.grab_release()
@@ -358,33 +350,76 @@ class Format_Dialog(Main_Dialog):
     
     def _create_format_widgets(self):
         
-        self.grid_columnconfigure((0, 1), weight=1)
-        self.rowconfigure(0, weight=1)
-        
-        self._label = CTkLabel(master=self,
-                               width=300,
-                               wraplength=300,
+        self._name_label = CTkLabel(master=self,
                                fg_color="transparent",
                                text_color=self._text_color,
-                               text="test",)
-        self._label.grid(row=0, column=0, columnspan=2, padx=20, pady=20, sticky="ew")
+                               anchor="e",
+                               text="Nom du volume",)
+        self._name_label.grid(row=0, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
         
-        self._entry = CTkEntry(master=self,
+        self._name_entry = CTkEntry(master=self,
                                width=230,
                                fg_color=self._entry_fg_color,
                                border_color=self._entry_border_color,
                                text_color=self._entry_text_color)
-        self._entry.grid(row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="ew")
+        self._name_entry.grid(row=0, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
         
-        self._ok_button = CTkButton(master=self,
+        self._name_desc = CTkLabel(master=self, fg_color="transparent", text_color='grey', anchor="w", text="Nom de la partition aprés formatage")
+        self._name_desc.grid(row=1, column=1, columnspan=2, padx=(5,20), pady=(5, 0), sticky="ew")
+        
+        self._label = CTkLabel(master=self,
+                               fg_color="transparent",
+                               text_color=self._text_color,
+                               anchor="e",
+                               text="Effacer",)
+        self._label.grid(row=2, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
+        
+        self._delete_default_var = StringVar(value="off")
+        self._delete = CTkCheckBox(master=self, variable=self._delete_default_var, onvalue="on", offvalue="off")
+        self._delete.grid(row=2, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
+        
+        self._delete_desc = CTkLabel(master=self, fg_color="transparent", text_color='grey', anchor="w", text="Ecrase les données existantes, allonge la durée du formatage")
+        self._delete_desc.grid(row=3, column=1, columnspan=2, padx=(5,20), pady=(5, 0), sticky="ew")
+        
+        self._label = CTkLabel(master=self,
+                               fg_color="transparent",
+                               text_color=self._text_color,
+                               anchor="e",
+                               text="Système de fichier",)
+        self._label.grid(row=4, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
+        
+        self._radio_var = StringVar(value="NTFS")
+        self._NTFS_radio = CTkRadioButton(master=self, text="NTFS (Compatible avec Windows)", variable= self._radio_var, value="NTFS")
+        self._NTFS_radio.grid(row=4, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
+        self._EXT4_radio = CTkRadioButton(master=self, text="EXT4 (Compatible avec les systèmes Linux)", variable= self._radio_var, value="EXT4")
+        self._EXT4_radio.grid(row=5, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
+        self._FAT_radio = CTkRadioButton(master=self, text="FAT (Compatible avec tous les systèmes)", variable= self._radio_var, value="FAT")
+        self._FAT_radio.grid(row=6, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
+        
+        self._cancel_button = CTkButton(master=self,
                                     width=100,
                                     border_width=0,
                                     fg_color=self._button_fg_color,
                                     hover_color=self._button_hover_color,
                                     text_color=self._button_text_color,
-                                    text='Ok',
+                                    text='Annuler',
+                                    command=self._cancel_event)
+        self._cancel_button.grid(row=7, column=1, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
+        
+        self._ok_button = CTkButton(master=self,
+                                    width=100,
+                                    border_width=0,
+                                    fg_color='#ed4539',
+                                    hover_color='#eb1d0e',
+                                    text_color=self._button_text_color,
+                                    text='Formater',
                                     command=self._ok_event)
-        self._ok_button.grid(row=2, column=0, columnspan=1, padx=(20, 10), pady=(0, 20), sticky="ew")
+        self._ok_button.grid(row=7, column=2, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
+    
+    def _ok_event(self, event=None):
+        self._user_input.extend([self._name_entry.get(), self._delete.get(), self._radio_var.get() ])
+        self.grab_release()
+        self.destroy()
 
 class Resize_Dialog(Main_Dialog):
     
