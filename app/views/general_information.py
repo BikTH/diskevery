@@ -100,6 +100,10 @@ Default_contenu_style = {
     "pady": 10,
 }
 
+#Dialog
+warning_ico = ["dialog_ico/warnig_dark.png", "dialog_ico/warnig_dark2.png", "dialog_ico/warnig_light.png"]
+ok_ico = ["dialog_ico/ok_dark.png", "dialog_ico/ok_dark2.png", "dialog_ico/ok_light.png"]
+
 
 # ________________________________________________Helpers
 # Fonctions servant à faire diverses tâches

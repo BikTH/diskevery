@@ -306,8 +306,9 @@ class Main_Dialog(CTkToplevel):
     def __init__(self, title: str, fg_color= None):
         super().__init__(fg_color=fg_color)
         
-        self._user_input = [] 
-        #cette variable contiendra les inputs de l'utilisateur sur le dialogue
+        self._user_input = [] #cette variable contiendra les inputs de l'utilisateur sur le dialogue
+        self._warning_image = return_ctk_image(warning_ico[1],100,100,warning_ico[2])
+        self._ok_image = return_ctk_image(ok_ico[1],100,100,ok_ico[2])
         
         self.title(title) #on définit le titre de la fenêtre
         self.lift() #pour metre notre fenêtre au premier plan
@@ -316,6 +317,9 @@ class Main_Dialog(CTkToplevel):
         self.resizable(False, False) #pour éviter que les boîte de dialogue soit redimensionné
         self.grab_set() #pour rendre les autres fenêtre non cliquable lorsque la boîte de dialogue est ouverte
         
+        
+        
+        #On définit le style de notre fenêtre 
         self._fg_color = ThemeManager.theme["CTkToplevel"]["fg_color"] 
         self._text_color = ThemeManager.theme["CTkLabel"]["text_color"] 
         self._button_fg_color = ThemeManager.theme["CTkButton"]["fg_color"] 
@@ -326,14 +330,24 @@ class Main_Dialog(CTkToplevel):
         self._entry_text_color = ThemeManager.theme["CTkEntry"]["text_color"] 
     
     def _on_closing(self):
+        """Cette méthode nous permet de détruire la fenêtre
+        """
+        self._user_input.clear()
         self.grab_release()
         self.destroy()
     
     def _cancel_event(self):
+        """Cette méthode nous permet d'anuler les actions dans la fenêtre et de la fermer
+        """
+        self._user_input.clear()
         self.grab_release()
         self.destroy()
     
     def get_input(self):
+        """Cette méthode nous permet de récupérer les données de la fenêtre
+        Returns:
+            tableau: la tableau contenant les différentes informations de la fenêtre
+        """
         self.master.wait_window(self)
         return self._user_input
 
@@ -349,74 +363,153 @@ class Format_Dialog(Main_Dialog):
         #on crée le contenu de notre boîte de dialogue
     
     def _create_format_widgets(self):
-        
-        self._name_label = CTkLabel(master=self,
-                               fg_color="transparent",
-                               text_color=self._text_color,
-                               anchor="e",
-                               text="Nom du volume",)
+        """Cette fonction génére le contenu de notre fenêtre et ses différents champs
+        """
+        #ce label est responsable de titré l'entrée qui recupérera le nom de la partition
+        #l'entry nous permettra de récupérer ce nom
+        #et en dessous on a un label pour décrire les champs plus hauts
+        self._name_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font,12),
+                               text="Nom du volume")
+        self._name_entry = CTkEntry(master=self, width=230, fg_color=self._entry_fg_color, border_color=self._entry_border_color, font=(app_font,12), text_color=self._entry_text_color)
+        self._name_desc = CTkLabel(master=self, fg_color="transparent", text_color='grey', anchor="w", font=(app_font,12), 
+                                   text="Nom de la partition aprés formatage")
+        #on les ajoute à la fenêtre
         self._name_label.grid(row=0, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
-        
-        self._name_entry = CTkEntry(master=self,
-                               width=230,
-                               fg_color=self._entry_fg_color,
-                               border_color=self._entry_border_color,
-                               text_color=self._entry_text_color)
         self._name_entry.grid(row=0, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
-        
-        self._name_desc = CTkLabel(master=self, fg_color="transparent", text_color='grey', anchor="w", text="Nom de la partition aprés formatage")
         self._name_desc.grid(row=1, column=1, columnspan=2, padx=(5,20), pady=(5, 0), sticky="ew")
         
-        self._label = CTkLabel(master=self,
-                               fg_color="transparent",
-                               text_color=self._text_color,
-                               anchor="e",
-                               text="Effacer",)
-        self._label.grid(row=2, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
-        
+        #ce label est responsable de titré le checkbox responsable de l'ajout de l'option pour effacer
+        #ensuite on a le checkbox responsable de l'action de suppression et sa valeur par défaut qui est off
+        #et en dessous on a un label pour décrire les champs de l'option supprimer
+        self._delete_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font,12),
+                               text="Effacer")
         self._delete_default_var = StringVar(value="off")
         self._delete = CTkCheckBox(master=self, variable=self._delete_default_var, onvalue="on", offvalue="off")
+        self._delete_desc = CTkLabel(master=self, fg_color="transparent", text_color='grey', anchor="w", font=(app_font,12), text="Ecrase les données existantes, allonge la durée du formatage")
+        #on les ajoute à notre fenêtre
         self._delete.grid(row=2, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
-        
-        self._delete_desc = CTkLabel(master=self, fg_color="transparent", text_color='grey', anchor="w", text="Ecrase les données existantes, allonge la durée du formatage")
+        self._delete_label.grid(row=2, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
         self._delete_desc.grid(row=3, column=1, columnspan=2, padx=(5,20), pady=(5, 0), sticky="ew")
         
-        self._label = CTkLabel(master=self,
-                               fg_color="transparent",
-                               text_color=self._text_color,
-                               anchor="e",
+        #ce label est responsable de titré l'option du choix du système de fichier
+        #ensuite on a les différents radio en rapport avec les systèmes de fichier : NTFS, EXT4 et FAT
+        self._sf_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font,12),
                                text="Système de fichier",)
-        self._label.grid(row=4, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
-        
         self._radio_var = StringVar(value="NTFS")
-        self._NTFS_radio = CTkRadioButton(master=self, text="NTFS (Compatible avec Windows)", variable= self._radio_var, value="NTFS")
+        self._NTFS_radio = CTkRadioButton(master=self, text="NTFS (Compatible avec Windows)", font=(app_font,12), variable= self._radio_var, value="NTFS")
+        self._EXT4_radio = CTkRadioButton(master=self, text="EXT4 (Compatible avec les systèmes Linux)", font=(app_font,12), variable= self._radio_var, value="EXT4")
+        self._FAT_radio = CTkRadioButton(master=self, text="FAT (Compatible avec tous les systèmes)", font=(app_font,12), variable= self._radio_var, value="FAT")
+        #on les ajoute à notre fenêtre
+        self._sf_label.grid(row=4, column=0, columnspan=1, padx=(20,5), pady=(20, 0), sticky="ew")
         self._NTFS_radio.grid(row=4, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
-        self._EXT4_radio = CTkRadioButton(master=self, text="EXT4 (Compatible avec les systèmes Linux)", variable= self._radio_var, value="EXT4")
         self._EXT4_radio.grid(row=5, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
-        self._FAT_radio = CTkRadioButton(master=self, text="FAT (Compatible avec tous les systèmes)", variable= self._radio_var, value="FAT")
         self._FAT_radio.grid(row=6, column=1, columnspan=2, padx=(5,20), pady=(20, 0), sticky="ew")
         
-        self._cancel_button = CTkButton(master=self,
-                                    width=100,
+        #on a ici les boutons annuler et confirmer
+        self._cancel_button = CTkButton(master=self, width=100,
                                     border_width=0,
                                     fg_color=self._button_fg_color,
                                     hover_color=self._button_hover_color,
                                     text_color=self._button_text_color,
                                     text='Annuler',
+                                    font=(app_font,12),
                                     command=self._cancel_event)
+        self._next_button = CTkButton(master=self,
+                                    width=100,
+                                    border_width=0,
+                                    fg_color='#ed4539',
+                                    hover_color='#eb1d0e',
+                                    text_color=self._button_text_color,
+                                    text='Confirmer',
+                                    font=(app_font,12),
+                                    command=self._next_event)
+        #on les ajoute à la fenêtre
         self._cancel_button.grid(row=7, column=1, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
+        self._next_button.grid(row=7, column=2, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
+    
+    def _create_confirm_format_widgets(self):
         
-        self._ok_button = CTkButton(master=self,
+        #on enlève les éléments de la fenêtre
+        self._name_label.grid_remove()
+        self._name_entry.grid_remove()
+        self._name_desc.grid_remove()
+        self._delete_label.grid_remove()
+        self._delete.grid_remove()
+        self._delete_desc.grid_remove()
+        self._sf_label.grid_remove()
+        self._NTFS_radio.grid_remove()
+        self._EXT4_radio.grid_remove()
+        self._FAT_radio.grid_remove()
+        self._cancel_button.grid_remove()
+        self._next_button.grid_remove()
+        
+        #on crée les nouveaux
+        self._warning_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="center", font=(app_font, 24), compound="top", image= self._warning_image,
+                               text="Attention: Toutes les données de la partition seront perdues",)
+        self._warning_label.grid(row=0, column=0, columnspan=3, padx=(20,20), pady=(20, 0), sticky="ew")
+        
+        self._warning_desc_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="center", font=(app_font, 16),
+                               text="Confirmer les détails de la partition avant de poursuivre",)
+        self._warning_desc_label.grid(row=1, column=0, columnspan=3, padx=(20,20), pady=(20, 20), sticky="ew")
+        
+        self._peripherique_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font, 12),
+                               text="Périphérique ",)
+        self._peripherique_label.grid(row=2, column=0, columnspan=1, padx=(20,5), pady=(20, 10), sticky="ew")
+        
+        self._peripherique_content_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="w", font=(app_font, 13),
+                               text="Test Tes Test ",)
+        self._peripherique_content_label.grid(row=2, column=1, columnspan=2, padx=(20,5), pady=(20, 10), sticky="ew")
+        
+        self._volume_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font, 12),
+                               text="Volume ",)
+        self._volume_label.grid(row=3, column=0, columnspan=1, padx=(20,5), pady=(10, 10), sticky="ew")
+        
+        self._volume_content_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="w", font=(app_font, 13),
+                               text="Test Test Test 2",)
+        self._volume_content_label.grid(row=3, column=1, columnspan=2, padx=(20,5), pady=(10, 10), sticky="ew")
+        
+        self._use_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font, 12),
+                               text="utilisé ",)
+        self._use_label.grid(row=4, column=0, columnspan=1, padx=(20,5), pady=(10, 10), sticky="ew")
+        
+        self._use_content_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="w", font=(app_font, 13),
+                               text="Test Test Test 3",)
+        self._use_content_label.grid(row=4, column=1, columnspan=2, padx=(20,5), pady=(10, 10), sticky="ew")
+        
+        self._divice_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="e", font=(app_font, 12),
+                               text="emplacement ",)
+        self._divice_label.grid(row=5, column=0, columnspan=1, padx=(20,5), pady=(10, 0), sticky="ew")
+        
+        self._divice_content_label = CTkLabel(master=self, fg_color="transparent", text_color=self._text_color, anchor="w", font=(app_font, 13),
+                               text="Test Test Test 4",)
+        self._divice_content_label.grid(row=5, column=1, columnspan=2, padx=(20,5), pady=(10, 0), sticky="ew")
+        
+        #on a ici les boutons annuler et confirmer
+        self._cancel_button = CTkButton(master=self, width=100,
+                                    border_width=0,
+                                    fg_color=self._button_fg_color,
+                                    hover_color=self._button_hover_color,
+                                    text_color=self._button_text_color,
+                                    text='Annuler',
+                                    font=(app_font,12),
+                                    command=self._cancel_event)
+        self._format_button = CTkButton(master=self,
                                     width=100,
                                     border_width=0,
                                     fg_color='#ed4539',
                                     hover_color='#eb1d0e',
                                     text_color=self._button_text_color,
                                     text='Formater',
-                                    command=self._ok_event)
-        self._ok_button.grid(row=7, column=2, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
+                                    font=(app_font,12),
+                                    command=self._format_event)
+        #on les ajoute à la fenêtre
+        self._cancel_button.grid(row=6, column=1, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
+        self._format_button.grid(row=6, column=2, columnspan=1, padx=(5, 10), pady=(20, 20), sticky="ew")
     
-    def _ok_event(self, event=None):
+    def _next_event(self, event=None):
+        self._create_confirm_format_widgets()
+    
+    def _format_event(self, event=None):
         self._user_input.extend([self._name_entry.get(), self._delete.get(), self._radio_var.get() ])
         self.grab_release()
         self.destroy()
