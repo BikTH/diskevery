@@ -29,7 +29,7 @@ class Partition(Diske):
             else:
                 return "Read/Write"
                     
-        disk = "/dev/sda6"  # Remplacez par le nom du disque souhaité
+        disk = "/dev/sda4"  # Remplacez par le nom du disque souhaité
         mountpoint = get_mountpoint(disk)
         if mountpoint:
             print(f"Point de montage de la partition {disk}: {mountpoint}")
