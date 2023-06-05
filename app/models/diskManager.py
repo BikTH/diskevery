@@ -57,28 +57,26 @@ class DiskManager:
 
     
 
-    def format_disk(self):
+
+    def format_disk(self,device, file_system):
+
 
         #verifie si un disk est actif
         if self.disque_actif == None:
             print("veuillez selectionner un disque ")
-            return 
+            return
         
-        # Verifie si on est root
-        if os.geteuid() != 0:
-            print(" Vous devez etre Root !")
-            exit(1)
+        # Construct the format command
+        command = f"mkfs.{file_system} {device}"
 
-        # Instructions de Formatage du disk
+        # Execute the command
+        try:
+            subprocess.run(command, shell=True, check=True)
+            print("Disk formatted successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error formatting disk: {e}")
 
-        # Démonte toutes les partitions du disques 
-        os.system(f'umount {self.disque_actif}*')
-
-        # Cré une nouvelle table de parition
-        os.system(f'echo -e "o\nn\np\n1\n\n\nw" | fdisk {self.disque_actif}')
-
-        # Formater le disque entier avec un système de fichiers
-        os.system(f'mkfs.ext4 {self.disque_actif}1')
+        
 
     def monter_partition(self, device, mount_point):
         
@@ -108,107 +106,98 @@ class DiskManager:
         # Instructions pour démonter une parition
         os.system(f'umount {device}')
         print("La partition {} a été démontée avec succès.".format(device))
-        
+    
 
-    def etendre_partition(self, device, size):
-        partition_trouvee = False
-
-        # Recherche de la partition à étendre dans la liste des disques
-        for disk in self.liste_disk:
-            for partition in disk.get_liste_partition():
-                if partition.get_device() == device:
-                    # Vérification si la partition est montée
-                    if partition.is_mounted():
-                        print("La partition {} est montée. Veuillez la démonter avant de l'étendre.".format(device))
-                    else:
-                        # Étendre la partition
-                        partition.extend(size)
-                        print("La partition {} a été étendue avec succès de {}.".format(device, size))
-                    partition_trouvee = True
-                    break
-
-            if partition_trouvee:
-                break
-
-        # Vérification si la partition a été trouvée
-        if not partition_trouvee:
-            print("La partition {} n'a pas été trouvée.".format(device))
-
-    def reduire_partition(self, device, size):
-        partition_trouvee = False
-
-        # Recherche de la partition à réduire dans la liste des disques
-        for disk in self.liste_disk:
-            for partition in disk.get_liste_partition():
-                if partition.get_device() == device:
-                    # Vérification si la partition est montée
-                    if partition.is_mounted():
-                        print("La partition {} est montée. Veuillez la démonter avant de la réduire.".format(device))
-                    else:
-                        # Réduire la partition
-                        partition.reduce(size)
-                        print("La partition {} a été réduite avec succès de {}.".format(device, size))
-                    partition_trouvee = True
-                    break
-
-            if partition_trouvee:
-                break
-
-        # Vérification si la partition a été trouvée
-        if not partition_trouvee:
-            print("La partition {} n'a pas été trouvée.".format(device))
-
-    def supprimer_partition(self, device):
-        partition_trouvee = False
-
-        # Recherche de la partition à supprimer dans la liste des disques
-        for disk in self.liste_disk:
-            for partition in disk.get_liste_partition():
-                if partition.get_device() == device:
-                    # Vérification si la partition est montée
-                    if partition.is_mounted():
-                        print("La partition {} est montée. Veuillez la démonter avant de la supprimer.".format(device))
-                    else:
-                        # Exécution de la commande fdisk pour supprimer la partition
-                        command = "echo 'd\nw\n' | fdisk {}".format(device)
-                        os.system(command)
-                        print("La partition {} a été supprimée avec succès.".format(device))
-                    partition_trouvee = True
-                    break
-
-            if partition_trouvee:
-                break
-
-        # Vérification si la partition a été trouvée
-        if not partition_trouvee:
-            print("La partition {} n'a pas été trouvée.".format(device))
-
-     
-
-    def create_partition(self,device, partition_size, start_sector, end_sector):
-
-        #verifie si un disk est actif
-        if self.disque_actif == None:
+    def extend_partition(self,device, partition_number, end_point):
+         #verifie si un disk est actif
+         if self.disque_actif == None:
             print("veuillez selectionner un disque ")
             return 
-        
-        # Verifie s'il ya assez d'espace
-        if partition_size > self.disque_actif.get_size_free():
-            print("Impossible de créer ! Espace insuffisant ")
-            return 
-         # Créer la nouvelle partition
-        command = f"echo -e 'n\n{partition_size}\n{start_sector}\n{end_sector}\n\nw\n' | fdisk {device}"
-         # Execute the command
-        try:
-            subprocess.run(command, shell=True, check=True)
-            print("Partition created successfully.")
-        except subprocess.CalledProcessError as e:
-            print(f"Error creating partition: {e}")
-        
+            # Construct the parted command
+         command = f"parted -s {device} resizepart {partition_number} {end_point}"
+            
+            # Execute the command
+         try:
+                subprocess.run(command, shell=True, check=True)
+                print("Partition extended successfully.")
+         except subprocess.CalledProcessError as e:
+                print(f"Error extending partition: {e}")
+
+
 
     
 
-    ''' def data_recovery(self, device, destination_path):
+
+
+    def reduce_partition(self,device, new_size):
+
+        #verifie si un disk est actif
+        if self.disque_actif == None:
+             print("veuillez selectionner un disque ")
+             return 
+
+
+        try:
+            # Recreate the file system on the partition
+            mkfs_command = f"mkfs.ext4 {device}"
+            subprocess.run(mkfs_command, shell=True, check=True)
+
+            # Calculate the new size in blocks
+            block_size_command = f"dumpe2fs -h {device} | grep 'Block size'"
+            block_count_command = f"dumpe2fs -h {device} | grep 'Block count'"
+            block_size = int(subprocess.check_output(block_size_command, shell=True).split()[2])
+            block_count = int(subprocess.check_output(block_count_command, shell=True).split()[2])
+            new_size_value = int(new_size.rstrip("MB"))  # Remove "MB" suffix and convert to integer
+            new_size_blocks = new_size_value * 1024 * 1024 // block_size  # Convert size to blocks
+
+            # Resize the file system within the partition
+            resize2fs_command = f"resize2fs {device} {new_size_blocks}"
+            subprocess.run(resize2fs_command, shell=True, check=True)
+
+            print("Partition reduced successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error reducing partition: {e}")
+
+
+
+    def delete_partition(self,device, partition_number):
+        #verifie si un disk est actif
+        if self.disque_actif == None:
+             print("veuillez selectionner un disque ")
+             return 
+            
+        # Construct the parted command
+        command = f"parted -s {device} rm {partition_number}"
+        
+        # Execute the command
+        try:
+            subprocess.run(command, shell=True, check=True)
+            print("Partition deleted successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error deleting partition: {e}")
+
+
+
+    def create_partition(self,device, partition_type, file_system_type, start, end):
+
+        #verifie si un disk est actif
+            if self.disque_actif == None:
+                print("veuillez selectionner un disque ")
+                return 
+            
+        # Construct the parted command
+            command = f"parted -s {device} mklabel gpt mkpart {partition_type} {file_system_type} {start} {end}"
+            
+            # Execute the command
+            try:
+                subprocess.run(command, shell=True, check=True)
+                print("Partition created successfully.")
+            except subprocess.CalledProcessError as e:
+                print(f"Error creating partition: {e}")
+
+    
+
+''' def data_recovery(self, device, destination_path):
         # Recherche du disque dans la liste des disques
         for disk in self.liste_disk:
             if disk.device == device:
@@ -232,4 +221,4 @@ class DiskManager:
 
         else:
             print("Le disque {} n'a pas été trouvé.".format(device))
-    '''
+'''
