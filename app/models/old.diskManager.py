@@ -3,17 +3,13 @@ from disk import Diske
 import os
 import psutil
 import subprocess
-#import pySMARTl
+#import pySMART
 
 class DiskManager:
 
     def __init__(self):
         self.liste_disk = []
         self.disque_actif = None
-
-    def availableDisk(self):
-        l=os.system("lsblk -o NAME,SIZE,TYPE,MOUNTPOINT | grep -E '^<device_name>\s|─'")
-        print(l)
 
     def lister_disques(self):
 
@@ -185,7 +181,7 @@ class DiskManager:
 
      
 
-    def create_partition(self,device, partition_size, start_sector, end_sector):
+    def create_partition(self,device, partition_size):
 
         #verifie si un disk est actif
         if self.disque_actif == None:
@@ -197,16 +193,10 @@ class DiskManager:
             print("Impossible de créer ! Espace insuffisant ")
             return 
          # Créer la nouvelle partition
-        command = f"echo -e 'n\n{partition_size}\n{start_sector}\n{end_sector}\n\nw\n' | fdisk {device}"
-         # Execute the command
-        try:
-            subprocess.run(command, shell=True, check=True)
-            print("Partition created successfully.")
-        except subprocess.CalledProcessError as e:
-            print(f"Error creating partition: {e}")
-        
+        subprocess.run(f'sudo parted {device} mkpart primary ext4 0% {partition_size}')
+        print("La partition a été créée avec succès sur le disque {}.".format(device))
 
-    
+                
 
     ''' def data_recovery(self, device, destination_path):
         # Recherche du disque dans la liste des disques
