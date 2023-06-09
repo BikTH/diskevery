@@ -5,9 +5,23 @@ import subprocess
 class Diske:
     def __init__(self, device):
         self.device = device
+        self.liste_partition = []
       
-      
+    def partition_is_mounted(self, device):
+        # Verifie si une partition est montée (retourne True ou False)
+        
+        # Liste des partitions déjà montée
+        mounted_partitions = psutil.disk_partitions(all=True)
 
+        is_mounted = False
+
+        for parition in mounted_partitions:
+            if parition.device == device:
+                is_mounted = True
+ 
+                break
+        return is_mounted
+    
     def get_model(self):
         command = ["lsblk", "-o", "MODEL"]
         output = subprocess.check_output(command).decode("utf-8")
@@ -24,18 +38,13 @@ class Diske:
         serial_number = device.get('ID_SERIAL_SHORT')
 
 
-        if serial_number:
-                print(f"Numéro de série du disque {self.device}: {serial_number}")
-        else:
-                print(f"Aucun numéro de série trouvé pour le disque {self.device}.")
+        #if serial_number:
+        #        print(f"Numéro de série du disque {self.device}: {serial_number}")
+        #else:
+        #        print(f"Aucun numéro de série trouvé pour le disque {self.device}.")
+        
         return serial_number
     
-    def get_name(self):
-        partitions = psutil.disk_partitions()
-        for partition in partitions:
-            if partition.device == self.name:
-                return partition.mountpoint
-        return None
 
     def get_total_size(self):
         try:
@@ -66,15 +75,15 @@ class Diske:
 
     
     
-    def get_size_free(self):
-        command = ['df', '-B1', self.device]
+    def get_size_free(self): 
+        
         try:
-            output = subprocess.check_output(command).decode().strip().split('\n')[1]
-            size_free = int(output.split()[3])
+            disk_usage = psutil.disk_usage(f"/dev/{self.get_disk_name()}")
+            size_free = disk_usage.free
             if size_free is not None:
-                print(f"Taille libre du disque {self.device}: {size_free} octets")
+                print(f"Taille libre du disque /dev/{self.get_disk_name()}: {size_free} octets")
             else:
-                print(f"Impossible de trouver le disque {self.device}")
+                print(f"Impossible de trouver la taille du disque {self.get_disk_name()}")
 
             return size_free
         except (subprocess.CalledProcessError, IndexError, ValueError):
@@ -86,26 +95,14 @@ class Diske:
             return device.sys_name
 
 
-    
-
     def get_liste_partition(self):
-        partitions = psutil.disk_partitions()
-        liste_partition = []
+        partitions = psutil.disk_partitions(all=False)
         for partition in partitions:
-            if partition.device == self.device:
-                liste_partition.append(f"Device: {partition.device}, Mountpoint: {partition.mountpoint}, Filesystem: {partition.fstype}")
+            if partition.device.startswith(self.device):
+                self.liste_partition.append(f"Device: {partition.device}, Mountpoint: {partition.mountpoint}, Filesystem: {partition.fstype}")
         
-        return liste_partition
+        return self.liste_partition
    
-    def update_liste_partition(disque, nouvelle_partition):
-        partitions = psutil.disk_partitions()
-        updated_partitions = []
-        for partition in partitions:
-            if partition.device == disque:
-                updated_partitions.append(nouvelle_partition)
-            else:
-                updated_partitions.append(partition)
-        return updated_partitions
     
     def get_health(self):
         try:
@@ -120,9 +117,9 @@ class Diske:
                 return "Bon"
         except Exception as e:
             return str(e)
-        
-
-disk = Diske('/dev/sda6')
+    
+'''
+disk = Diske('/dev/sda')
 total_size = disk.get_total_size()
 used_size = disk.get_used_size()
 size_free = disk.get_size_free()
@@ -135,10 +132,12 @@ disk_partitions = disk.get_liste_partition()
 
 
 disk_model = disk.get_model() 
-print(f"le model du disque est :{disk_model}\n")
 
+print(f"le model du disque est :{disk_model}\n")
+print(f"le numéro de serie du disque est :{serial}\n")
 print(f" partitionné :{disk_partitions}\n")
 print(f"État de santé du disque:  {health_state}\n")
+'''
 
 
 
