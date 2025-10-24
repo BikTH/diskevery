@@ -33,7 +33,7 @@ class Diske:
     def get_name(self):
         partitions = psutil.disk_partitions()
         for partition in partitions:
-            if partition.device == self.name:
+            if partition.device == self.device:
                 return partition.mountpoint
         return None
 
@@ -122,23 +122,23 @@ class Diske:
             return str(e)
         
 
-disk = Diske('/dev/sda6')
-total_size = disk.get_total_size()
-used_size = disk.get_used_size()
-size_free = disk.get_size_free()
+if __name__ == "__main__":
+    disk = Diske('/dev/sda6')
+    total_size = disk.get_total_size()
+    used_size = disk.get_used_size()
+    size_free = disk.get_size_free()
 
-disk_name = disk.get_disk_name()
-print("Nom du disque : ", disk_name)
-health_state = disk.get_health()
-serial = disk.get_serial_number()
-disk_partitions = disk.get_liste_partition() 
+    disk_name = disk.get_disk_name()
+    print("Nom du disque : ", disk_name)
+    health_state = disk.get_health()
+    serial = disk.get_serial_number()
+    disk_partitions = disk.get_liste_partition()
 
+    disk_model = disk.get_model()
+    print(f"le model du disque est :{disk_model}\n")
 
-disk_model = disk.get_model() 
-print(f"le model du disque est :{disk_model}\n")
-
-print(f" partitionné :{disk_partitions}\n")
-print(f"État de santé du disque:  {health_state}\n")
+    print(f" partitionné :{disk_partitions}\n")
+    print(f"État de santé du disque:  {health_state}\n")
 
 
 
