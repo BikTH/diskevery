@@ -33,7 +33,7 @@ class Diske:
     def get_name(self):
         partitions = psutil.disk_partitions()
         for partition in partitions:
-            if partition.device == self.name:
+            if partition.device == self.device:
                 return partition.mountpoint
         return None
 
@@ -97,11 +97,11 @@ class Diske:
         
         return liste_partition
    
-    def update_liste_partition(disque, nouvelle_partition):
+    def update_liste_partition(self, nouvelle_partition):
         partitions = psutil.disk_partitions()
         updated_partitions = []
         for partition in partitions:
-            if partition.device == disque:
+            if partition.device == self.device:
                 updated_partitions.append(nouvelle_partition)
             else:
                 updated_partitions.append(partition)
