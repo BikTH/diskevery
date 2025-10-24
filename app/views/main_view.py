@@ -41,8 +41,8 @@ class Main_window(ctk):
         
         
         # _________FRAMES DE LA FENETRE_________
-        # On charge les différentes frames qui constituerons notre fenêtre, 
-        # ici nous en avons 5 : le menu, les disques, les outils, le contenu et l'état
+        # On charge les différentes frames qui constitueront notre fenêtre :
+        # le menu, les disques, les outils, la zone de contenu et la barre de tâches
         self.menu = MenuFrame(self)  #on créer le frame qui contiendra les éléments de la barre de menu 
         self.menu.add_menu_bar()
         
@@ -55,8 +55,8 @@ class Main_window(ctk):
         self.contenu = DefaultContenuFrame(self) #on créer le frame qui contiendra les éléments de la zone de contenu principale et on l'initialise avec grid
         self.contenu.grid(row=1, column=1, padx=(3,0), pady=(3,0), sticky="nsew")
         
-        self.menu = TachesFrame(self)  #on créer le frame qui contiendra les éléments de la barre de tache et on l'initialise avec grid
-        self.menu.grid(row=2, column=0, columnspan=2, padx=(0,0), pady=(0,0), sticky="sew")
+        self.taches = TachesFrame(self)  #on créer le frame qui contiendra les éléments de la barre de tache et on l'initialise avec grid
+        self.taches.grid(row=2, column=0, columnspan=2, padx=(0,0), pady=(0,0), sticky="sew")
     
     
     def grid_contenu(self):
