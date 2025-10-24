@@ -1,25 +1,6 @@
 # Diskevery
 
-Outil en ligne de commande destiné aux environnements Linux pour la gestion et la récupération d'informations relatives aux disques.
-
-## Démarrage rapide
-
-```bash
-python -m app.main
-```
-
-La commande inspecte les disques disponibles, calcule l'utilisation de leurs partitions et affiche un rapport synthétique dans le terminal.
-
-## Architecture
-
-L'application est organisée autour de trois couches afin de faciliter l'évolution du code :
-
-- `app/core` contient les modèles métiers (`DiskInfo`, `PartitionInfo`).
-- `app/infrastructure` encapsule la récupération des données système (`SystemDiskInspector`).
-- `app/services` agrège les informations de bas niveau pour produire des objets métiers prêts à l'emploi (`DiskService`).
-- `app/presentation` fournit la vue actuelle en mode CLI (`render_disk_report`).
-
-Cette séparation claire remplace l'ancienne architecture vide MVC et permet de réutiliser facilement les services au sein d'une interface graphique ultérieure.
+Application graphique destiné au environnement linux pour la gestion et la récupération de disque
 
 
 ## Authors
